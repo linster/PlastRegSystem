@@ -10,6 +10,7 @@ public class DBhelper {
 	/** This class is responsible for setting up the database connection 
 	 * 
 	 */
+	//If you're messing around in LibreOffice base, the driver string is org.openoffice.comp.drivers.MySQL.Driver
     private JDBCConnectionPool connectionPool = null;
 	private static String url = "jdbc:mysql://mysql2.000webhost.com/a5980192_vaadin1";
 	public static String username = "a5980192_vaadin";
@@ -22,7 +23,7 @@ public class DBhelper {
     private void initConnectionPool() {
       	try {
       		
-          	connectionPool = new SimpleJDBCConnectionPool("com.mysql.jdbc.Driver", DBhelper.getUrl(), DBhelper.username, DBhelper.password, 1, 3);
+          	connectionPool = new SimpleJDBCConnectionPool("com.mysql.jdbc.Driver", DBhelper.getUrl(), DBhelper.username, DBhelper.password);
       	} catch (SQLException e) {
         	  e.printStackTrace();
         }
