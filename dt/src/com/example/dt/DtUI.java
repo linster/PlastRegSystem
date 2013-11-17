@@ -40,9 +40,14 @@ public class DtUI extends UI {
 		layout.addComponent(button);
 		*/
 		
-		//Want to load the DummyTable form.
-		DummyTable dummytabe = new DummyTable();
-		setContent(dummytabe);
+		
+		
+		//Instantiate the DBhelper object.
+		
+		
+		//Load the DummyTable form.
+		DummyTable dummytable = new DummyTable();
+		setContent(dummytable);
 	}
 
 }
