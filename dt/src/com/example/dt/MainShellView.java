@@ -6,12 +6,14 @@ import javax.servlet.annotation.WebServlet;
 import com.google.gwt.layout.client.Layout;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
+import com.vaadin.data.Property.*;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.*;
-import com.example.dt.*;
+import com.vaadin.ui.Notification.Type;
+
 
 @SuppressWarnings("serial")
 @Theme("dt")
@@ -21,13 +23,17 @@ public class MainShellView extends UI {
 	@VaadinServletConfiguration(productionMode = false, ui = MainShellView.class)
 	public static class Servlet extends VaadinServlet {
 	}
+	
+	
 
 	Tree navtree = new Tree("Navigation");
 	Panel apppanel = new Panel("Application View");
 	@Override
 	protected void init(VaadinRequest request) {
+		
 		initLayout();
 		initNavTree();
+		initNavTreeListeners();
 		
 	}
 	
@@ -66,6 +72,26 @@ public class MainShellView extends UI {
 		MainShellControl.initNavTree(this.navtree);
 	}
 	
+	private void initNavTreeListeners() {
+		this.navtree.addValueChangeListener(new ValueChangeListener() {
+			//Add the listener to the tree component. 
+			@Override
+			public void valueChange(final ValueChangeEvent event) {
+				//Vaadin handles events as these magic objects
+				//which correspond to what type of thing was clicked on.
+				if (event.getProperty().getValue() != null) {
+					//event.getProperty().getValue() is the name of the thing selected
+					//if we want to get it's parent, then go event.getProperty().SOMETHING
+					//to get it's parent. We can then pass this to an enum in the control file.
+					
+					final String selectedItem = String.valueOf(event.getProperty().getValue());
+					Notification.show("Item Selected", selectedItem, Type.TRAY_NOTIFICATION);
+					
+				}
+				
+			}
+		});
+	}
 	
 	
 

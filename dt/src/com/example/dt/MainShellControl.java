@@ -2,7 +2,7 @@ package com.example.dt;
 
 import com.vaadin.ui.Tree;
 
-public class MainShellControl {
+public class MainShellControl extends MainShellView {
 
 	public static void initNavTree(Tree t) {
 		/** Populates the navigation tree of the main "Shell" with entries
@@ -30,7 +30,16 @@ public class MainShellControl {
 				t.expandItemsRecursively(parent);
 			}
 		}
+		t.setImmediate(true);
 		
 	}
+	
+	public static void initNavTreeListeners(Tree t){
+		/** Creates the ValueChangeListener so that when the user clicks on
+		 *  a navigation item in the nav tree, it sets the content 
+		 */
+	}
+
+	
 
 }
