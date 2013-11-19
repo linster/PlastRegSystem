@@ -12,8 +12,8 @@ public class DBhelper {
 	 */
 	//If you're messing around in LibreOffice base, the driver string is org.openoffice.comp.drivers.MySQL.Driver
     private JDBCConnectionPool connectionPool = null;
-	private static String url = "jdbc:mysql://mysql2.000webhost.com/a5980192_vaadin1";
-	public static String username = "a5980192_vaadin";
+	private static String url = "jdbc:mysql://localhost:3306/dummy";
+	public static String username = "vaadin";
 	public static String password = "vaadin1";
 
 	public DBhelper() {
@@ -23,7 +23,7 @@ public class DBhelper {
     private void initConnectionPool() {
       	try {
       		
-          	connectionPool = new SimpleJDBCConnectionPool("com.mysql.jdbc.Driver", DBhelper.getUrl(), DBhelper.username, DBhelper.password);
+          	connectionPool = new SimpleJDBCConnectionPool("org.mariadb.jdbc.Driver", DBhelper.getUrl(), DBhelper.username, DBhelper.password);
       	} catch (SQLException e) {
         	  e.printStackTrace();
         }
