@@ -6,7 +6,6 @@ import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
-import com.example.dt.DBhelper;
 public class DummyTable extends CustomComponent {
 
 	/*- VaadinEditorProperties={"grid":"RegularGrid,20","showGrid":true,"snapToGrid":true,"snapToObject":true,"movingGuides":false,"snappingDistance":10} */
@@ -50,9 +49,9 @@ public class DummyTable extends CustomComponent {
 		table_1 = new Table();
 		table_1.setImmediate(false);
 		table_1.setWidth("100.0%");
-		table_1.setHeight("-1px");
-		mainLayout.addComponent(table_1,
-				"top:108.0px;right:502.0px;left:0.0px;");
+		table_1.setHeight("360px");
+		mainLayout
+				.addComponent(table_1, "top:18.0px;right:265.0px;left:0.0px;");
 		
 		// label_1
 		label_1 = new Label();

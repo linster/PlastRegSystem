@@ -13,7 +13,7 @@ import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Notification.Type;
-
+import com.example.dt.DummyTable;
 
 @SuppressWarnings("serial")
 @Theme("dt")
@@ -25,15 +25,31 @@ public class MainShellView extends UI {
 	}
 	
 	
+	/* Diagram of layouts
+	 * (all these in a 2 column grid)
+	 * -----------------
+	 * LOGO (Horiz)    |
+	 * ----------------|
+	 * mainMenu (Horiz)|
+	 * ----------------|
+	 * Tree | Panel    |
+	 * 
+	 */
+	
 
 	Tree navtree = new Tree("Navigation");
 	Panel apppanel = new Panel("Application View");
+	Component apppanelComponent = new Label("Test");
+	HorizontalLayout mainMenuLayout = new HorizontalLayout(); //Holds signin/switch user buttons, and welcome doo-dads.
+	
 	@Override
 	protected void init(VaadinRequest request) {
 		
 		initLayout();
+		initMainMenuLayout();
 		initNavTree();
 		initNavTreeListeners();
+		apppanel.setContent(apppanelComponent);
 		
 	}
 	
@@ -41,10 +57,12 @@ public class MainShellView extends UI {
 		/** Draws a layout something similar to 
 		 *   LOGO
 		 *   ---------
+		 *   Menu
+		 *   --------------
 		 *   Treeview | Panel
 		 *            |
 		 */
-	GridLayout grid = new GridLayout(2,2);
+	GridLayout grid = new GridLayout(2,3);
 	setContent(grid);
 	grid.setColumnExpandRatio(0, 1);
 	grid.setColumnExpandRatio(1, 4);
@@ -55,17 +73,26 @@ public class MainShellView extends UI {
 	HorizontalLayout logolayout = new HorizontalLayout();
 	logolayout.setWidth("100%");
 	logolayout.setHeight("100px");
-	
 	FileResource rlogoimage = new FileResource( new File((VaadinService.getCurrent().getBaseDirectory().getAbsolutePath())+"/WEB-INF/images/logo.png" ));
-	Image logoimage = new Image("Logo", rlogoimage);
+	Image logoimage = new Image("", rlogoimage);
 	logoimage.setHeight("80px");
 	logolayout.addComponent(logoimage);
-	logolayout.addComponent(new Label("Main Screen"));
-
-	grid.addComponent(logolayout, 0, 0, 1, 0); //Add a label
-	grid.addComponent(this.navtree, 0, 1);
-	grid.addComponent(apppanel, 1, 1);
+	Label main = new Label("<h1>Main Screen</h1>",Label.CONTENT_XHTML);
+	logolayout.addComponent(main);
+	logolayout.setComponentAlignment(main, Alignment.BOTTOM_CENTER );
+	grid.addComponent(logolayout, 0, 0, 1, 0); 
 	
+	//Make a new Horizontal Layout for signout/switch user buttons.
+	grid.addComponent(mainMenuLayout, 1, 1, 1, 1);
+	grid.setComponentAlignment(mainMenuLayout, Alignment.MIDDLE_RIGHT);
+	grid.addComponent(this.navtree, 0, 2);
+	grid.addComponent(apppanel, 1, 2);
+	
+	//TODO Make this app panel actually expand to the full window size. 
+	apppanel.setHeight("800px");
+	apppanel.setWidth("800px");
+	//apppanel.setHeight("800px");
+	//apppanel.setWidth(grid.getWidth(), grid.getWidthUnits());
 	}
 	
 	private void initNavTree() {
@@ -81,18 +108,20 @@ public class MainShellView extends UI {
 				//which correspond to what type of thing was clicked on.
 				if (event.getProperty().getValue() != null) {
 					//event.getProperty().getValue() is the name of the thing selected
-					//if we want to get it's parent, then go event.getProperty().SOMETHING
-					//to get it's parent. We can then pass this to an enum in the control file.
-					
 					final String selectedItem = String.valueOf(event.getProperty().getValue());
-					Notification.show("Item Selected", selectedItem, Type.TRAY_NOTIFICATION);
-					
+					final String parent = String.valueOf(navtree.getParent(navtree.getValue()));
+					//Ok, so we can grab the selected item and it's parent. 
+					apppanelComponent = MainShellControl.NavTreeMethodDispatch(parent, selectedItem);
+					apppanel.setContent(apppanelComponent);
 				}
 				
 			}
 		});
 	}
 	
-	
+	private void initMainMenuLayout() {
+		mainMenuLayout.addComponent(new Label("Welcome User!"));
+		mainMenuLayout.addComponent(new Button("Sign out"));
+	}
 
 }
