@@ -41,6 +41,12 @@ public class MainShellView extends UI {
 	Panel apppanel = new Panel("Application View");
 	Component apppanelComponent = new Label("Test");
 	HorizontalLayout mainMenuLayout = new HorizontalLayout(); //Holds signin/switch user buttons, and welcome doo-dads.
+	final static String[][] navmenuitems = new String[][] {
+		new String[]{ "Home"},
+		new String[]{ "DummyTable", "Add", "Edit"},
+		new String[]{ "Item 2", "Child 1", "Child 2"}
+		};
+	
 	
 	@Override
 	protected void init(VaadinRequest request) {
@@ -95,8 +101,28 @@ public class MainShellView extends UI {
 	//apppanel.setWidth(grid.getWidth(), grid.getWidthUnits());
 	}
 	
-	private void initNavTree() {
-		MainShellControl.initNavTree(this.navtree);
+	private void initNavTree() {		
+		/** Populates the navigation tree of the main "Shell" with entries
+		 * 
+		 */
+		for (String[] parent: navmenuitems){
+			navtree.addItem(parent[0]);
+			
+			if (parent.length == 1) {
+				navtree.setChildrenAllowed(parent, false);
+			} else {
+				for (String child : parent) {
+					if (child.equals(parent[0])) //So I can use nice for notation
+						continue; 				 //without reprinting the parent
+					navtree.addItem(child);					
+					navtree.setParent(child, parent[0]);
+					navtree.setChildrenAllowed(child, false);
+				}
+				navtree.expandItemsRecursively(parent);
+			}
+		}
+		navtree.setImmediate(true);
+		
 	}
 	
 	private void initNavTreeListeners() {
@@ -111,7 +137,7 @@ public class MainShellView extends UI {
 					final String selectedItem = String.valueOf(event.getProperty().getValue());
 					final String parent = String.valueOf(navtree.getParent(navtree.getValue()));
 					//Ok, so we can grab the selected item and it's parent. 
-					apppanelComponent = MainShellControl.NavTreeMethodDispatch(parent, selectedItem);
+					apppanelComponent = NavTreeMethodDispatch(parent, selectedItem);
 					apppanel.setContent(apppanelComponent);
 				}
 				
@@ -119,7 +145,38 @@ public class MainShellView extends UI {
 		});
 	}
 	
+	public Component NavTreeMethodDispatch(String parent, String child) {
+		/** Given a parent, child strings, return a component to set the app to. If no dispatch effective, set to null
+		 * @return Component. For use in the SetContent.
+		 */
+		
+		if (parent.equals("null") && child.equals("DummyTable")){ //String.valueOf(Object) returns the string "null", not the null NULL.																
+			return new com.example.dt.DummyTable();				  //This is the way to access a root element of the tree.	
+		}
+		
+		if (parent.equals("DummyTable") && child.equals("Add")){
+			return new com.example.dt.DummyTable();
+		}
+		
+		if (parent.equals("null") && child.equals("Item 2")) {
+			return new Label("Item 2 root");
+		}
+		
+		if (parent.equals("Item 2") && child.equals("Child 1")){
+			return new Label("Item 2 Child 1");
+		}
+		
+		
+		return new Label("Nothing selected");
+		
+		
+	}
+	
+	
 	private void initMainMenuLayout() {
+		/** Initialize the System menubar. In here, there will be the Office-365-style switcher
+		 * 
+		 */
 		mainMenuLayout.addComponent(new Label("Welcome User!"));
 		mainMenuLayout.addComponent(new Button("Sign out"));
 	}
