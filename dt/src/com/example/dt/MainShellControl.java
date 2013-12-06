@@ -7,12 +7,13 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Tree;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
-public class MainShellControl extends MainShellView {
+public class MainShellControl{
+
 
 	
-	//Spring sec test
-	
-
+	public MainShellControl(MainShellView msv){
+		//Null constructor.
+	}
 	
 
 }

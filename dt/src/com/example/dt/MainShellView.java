@@ -7,6 +7,8 @@ import com.google.gwt.layout.client.Layout;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.data.Property.*;
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinService;
@@ -18,8 +20,8 @@ import com.example.dt.DummyTable;
 @SuppressWarnings("serial")
 @Theme("dt")
 
-public class MainShellView extends UI {
-	@WebServlet(value = "/*", asyncSupported = true)
+public class MainShellView extends UI implements View{
+	@WebServlet(value = "/msv/*", asyncSupported = true)
 	@VaadinServletConfiguration(productionMode = false, ui = MainShellView.class)
 	public static class Servlet extends VaadinServlet {
 	}
@@ -179,6 +181,20 @@ public class MainShellView extends UI {
 		 */
 		mainMenuLayout.addComponent(new Label("Welcome User!"));
 		mainMenuLayout.addComponent(new Button("Sign out"));
+	}
+
+	@Override
+	public void enter(ViewChangeEvent event) {
+		/** This is the main hook that Vaadin uses when a view is changed.
+		 * 	The MasterNavigator generates a ViewChangeEvent which is passed into this method.
+		 * 
+		 *  This is probably a good place to put some SpringSecurity auth checking
+		 */
+		
+		this.init(null);
+		
+		
+		
 	}
 
 }

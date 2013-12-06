@@ -8,7 +8,7 @@ public class MasterNavigator {
  *  registering all views into this MasterNavigator
  *  See the Google Doc: PlastRegSystem/Architectural Diagrams/M1 for details.
  */
-	Navigator navigator;
+	private static Navigator navigator = null;
 	
 	private static MasterNavigator instance = null;
 	
@@ -16,10 +16,14 @@ public class MasterNavigator {
 		//Null constructor to prevent instantiation
 	}
 	
-	public static MasterNavigator getNav() { //Warning: this may not be thread-safe
+	public static MasterNavigator getInstance() { //Warning: this may not be thread-safe
 		if (instance == null) {
 			instance = new MasterNavigator();
 		}
 		return instance;
+	}
+	
+	public Navigator getNav() {
+		return navigator;
 	}
 }
