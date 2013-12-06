@@ -6,11 +6,12 @@ import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 
 public class BootStrap extends UI {
 	@WebServlet(value = "/*", asyncSupported = true)
-	@VaadinServletConfiguration(productionMode = false, ui = MainShellView.class)
+	@VaadinServletConfiguration(productionMode = false, ui = BootStrap.class)
 	public static class Servlet extends VaadinServlet {
 	}
 	
@@ -25,26 +26,32 @@ public class BootStrap extends UI {
  *  	Navigate to the LoginView.
  */
 	
-	public BootStrap() {
+	public void initBootStrap() {
 		
 		//Create the MasterNavigator and initialize it
 		Navigator nav = MasterNavigator.getInstance().getNav();
 		nav = new Navigator(this, this);
+		getPage().setTitle("Bootstrap Page");
 		
 		//Initialize the MainShell view and controller
 		MainShellView msv = new MainShellView();
 		MainShellControl msc = new MainShellControl(msv);
 		//Register the MainShellView to the MasterNavigator
-		nav.addView("MainShellView", msv);
+		nav.addView("Main", msv);
+		
+		//Initialize the Login view and controller
+		LoginView lv = new LoginView();
+		LoginController lc = new LoginController(lv);
+		nav.addView("", lv);
 		
 		//Navigate to the MainShellView
-		nav.navigateTo("MainShellView");
+		//nav.navigateTo("");
 	}
-
+	
 	@Override
 	protected void init(VaadinRequest request) {
 	//No idea what the initialization sequence is for Vaadin. Hopefully
 	// the constructor is run and does stuff before this method does anything.
-		
+		initBootStrap();
 	}
 }

@@ -20,11 +20,8 @@ import com.example.dt.DummyTable;
 @SuppressWarnings("serial")
 @Theme("dt")
 
-public class MainShellView extends UI implements View{
-	@WebServlet(value = "/msv/*", asyncSupported = true)
-	@VaadinServletConfiguration(productionMode = false, ui = MainShellView.class)
-	public static class Servlet extends VaadinServlet {
-	}
+public class MainShellView extends Panel implements View{
+	
 	
 	
 	/* Diagram of layouts
@@ -50,16 +47,7 @@ public class MainShellView extends UI implements View{
 		};
 	
 	
-	@Override
-	protected void init(VaadinRequest request) {
-		
-		initLayout();
-		initMainMenuLayout();
-		initNavTree();
-		initNavTreeListeners();
-		apppanel.setContent(apppanelComponent);
-		
-	}
+	
 	
 	private void initLayout() {
 		/** Draws a layout something similar to 
@@ -191,10 +179,18 @@ public class MainShellView extends UI implements View{
 		 *  This is probably a good place to put some SpringSecurity auth checking
 		 */
 		
-		this.init(null);
-		
-		
+		Notification.show("Welcome to the main form");
 		
 	}
+	
+	public MainShellView() {
+		initLayout();
+		initMainMenuLayout();
+		initNavTree();
+		initNavTreeListeners();
+		apppanel.setContent(apppanelComponent);
+	}
+
+	
 
 }
