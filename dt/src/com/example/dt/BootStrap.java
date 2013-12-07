@@ -29,8 +29,8 @@ public class BootStrap extends UI {
 	public void initBootStrap() {
 		
 		//Create the MasterNavigator and initialize it
+		MasterNavigator.InstatiateNavigator(this, this);
 		Navigator nav = MasterNavigator.getInstance().getNav();
-		nav = new Navigator(this, this);
 		getPage().setTitle("Bootstrap Page");
 		
 		//Initialize the MainShell view and controller

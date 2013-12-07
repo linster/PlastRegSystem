@@ -1,6 +1,8 @@
 package com.example.dt;
 
 import com.vaadin.navigator.Navigator;
+import com.vaadin.ui.SingleComponentContainer;
+import com.vaadin.ui.UI;
 
 public class MasterNavigator {
 /** This is a singleton object that holds the master navigator for the application
@@ -21,6 +23,10 @@ public class MasterNavigator {
 			instance = new MasterNavigator();
 		}
 		return instance;
+	}
+	
+	public static void InstatiateNavigator(UI ui, SingleComponentContainer scc) {
+		navigator = new Navigator(ui, scc);
 	}
 	
 	public Navigator getNav() {

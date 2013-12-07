@@ -2,6 +2,7 @@ package com.example.dt;
 
 import java.io.File;
 
+import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileResource;
@@ -73,7 +74,9 @@ public class LoginView extends Panel implements View {
 		blogin.addClickListener(new Button.ClickListener() { 
 			public void buttonClick(ClickEvent event) {
 				Notification.show("Button clicked");
-				MasterNavigator.getInstance().getNav().navigateTo("Main");
+				//MasterNavigator.getInstance().getNav().navigateTo("Main");
+				Navigator nav = MasterNavigator.getInstance().getNav();
+				nav.navigateTo("Main");
 			}
 		} );
 
