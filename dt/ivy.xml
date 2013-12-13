@@ -40,5 +40,10 @@
 		<!-- Compiler for custom widget sets. Should not be deployed -->
 		<dependency org="com.vaadin" name="vaadin-client-compiler"
 			rev="&vaadin.version;" conf="widgetset-compile->default" />
-	</dependencies>
+		<dependency org="org.springframework" rev="3.2.5.RELEASE" name="spring-core"> </dependency>
+		<dependency org="org.springframework" rev="3.2.5.RELEASE" name="spring-web"> </dependency>
+		<dependency org="org.springframework" rev="3.1.4.RELEASE" name="spring-parent"> </dependency>
+		<dependency org="org.springframework.security" rev="3.1.4.RELEASE" name="spring-security-web"> </dependency>
+		<dependency org="org.springframework.security" rev="3.1.4.RELEASE" name="spring-security-config"> </dependency>
+		</dependencies>
 </ivy-module>

@@ -2,6 +2,8 @@ package com.example.dt;
 
 import java.io.File;
 
+import javax.servlet.ServletContext;
+
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -10,6 +12,22 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
+import org.springframework.*;
+import org.springframework.security.*;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import org.springframework.http.HttpRequest;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 public class LoginView extends Panel implements View {
 
@@ -71,12 +89,40 @@ public class LoginView extends Panel implements View {
 		
 		
 		//BAD BAD BAD CODE
+		//Should be refactored into the controller for this.
 		blogin.addClickListener(new Button.ClickListener() { 
 			public void buttonClick(ClickEvent event) {
-				Notification.show("Button clicked");
-				//MasterNavigator.getInstance().getNav().navigateTo("Main");
+				// Get the navigator object to work with later
 				Navigator nav = MasterNavigator.getInstance().getNav();
-				nav.navigateTo("Main");
+				
+				
+				/*The following code is copy/pasted from this tutorial:
+				 * http://packtlib.packtpub.com/library/9781782167525/ch06lvl1sec52
+				 * 
+				 * Had to add spring-context in manually from MavenDB since Ivy wouldn't pull it for some reason
+				 * 
+				 */
+				try{ // Debug the null pointer exception on the following line. 
+			          ServletContext servletContext = VaadinRequestHolder.getRequest().getSession().getServletContext();
+			          UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(tfusername.getValue(),tfpassword.getValue());
+			            token.setDetails( new WebAuthenticationDetails(VaadinRequestHolder.getRequest()));
+			            WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
+			            AuthenticationManager authManager = wac.getBean(AuthenticationManager.class);
+			            Authentication authentication = authManager.authenticate(token);
+			            SecurityContextHolder.getContext().setAuthentication(authentication);
+			            if(authentication.isAuthenticated()){
+			              Notification.show("You are authenticated");
+			              nav.navigateTo("Main");
+			            	}
+
+
+			    } catch (BadCredentialsException e) {
+
+			      Notification.show("Bad credentials");
+			    }
+				/*
+				 * End of Spring Security Magic
+				 */
 			}
 		} );
 
