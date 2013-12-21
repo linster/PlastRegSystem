@@ -14,12 +14,25 @@
 
 	<authentication-manager>
 	  <authentication-provider>
-	    <user-service>
+	     <!-- <user-service>
 		<user name="bob" password="test" authorities="ROLE_EDITOR" />
 	    </user-service>
+	    -->
+	     <jdbc-user-service data-source-ref="dataSource" />
+	    
+	    
 	  </authentication-provider>
 	</authentication-manager>
 	<beans:bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler">
 		<beans:property name="invalidateHttpSession" value="false" />
 	</beans:bean>
+	
+	<!-- Initialization for data source -->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${database.driver}" />
+		<property name="url" value="${database.url}" />
+		<property name="username" value="${database.user}" />
+		<property name="password" value="${database.password}" />
+</bean> 
+	
 </beans:beans>
