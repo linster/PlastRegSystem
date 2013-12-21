@@ -18,6 +18,7 @@ import com.vaadin.ui.Button.ClickEvent;
 
 import org.plast.reg.MasterNavigator;
 import org.plast.reg.VaadinRequestHolder;
+import org.plast.reg.events.LoginEvent;
 import org.springframework.*;
 import org.springframework.security.*;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,6 +36,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import com.google.common.eventbus.EventBus;
 public class LoginView extends Panel implements View {
 
 	
@@ -45,14 +47,14 @@ public class LoginView extends Panel implements View {
 
 	}
 	
-	public LoginView() {
-		initlayout();
+	public LoginView(final EventBus authEventBus) {
+		initlayout(authEventBus);
 	}
 	TextField tfusername = null;
 	PasswordField tfpassword = null;
 	Button blogin = null;
 	
-	private void initlayout() {
+	private void initlayout(final EventBus authEventBus) {
 		
 		
 
@@ -98,49 +100,11 @@ public class LoginView extends Panel implements View {
 		//Should be refactored into the controller for this.
 		blogin.addClickListener(new Button.ClickListener() { 
 			public void buttonClick(ClickEvent event) {
-				// Get the navigator object to work with later
-				Navigator nav = MasterNavigator.getInstance().getNav();
-				
-				
-				/*The following code is copy/pasted from this tutorial:
-				 * http://packtlib.packtpub.com/library/9781782167525/ch06lvl1sec52
-				 * 
-				 * Had to add spring-context in manually from MavenDB since Ivy wouldn't pull it for some reason
-				 * 
-				 */
-				
-				/*
-				 * Interesting (possibly relevant Stack Overflow page to rewrite the code below
-				 * http://stackoverflow.com/questions/14373682/spring-security-vaadin-authetication-manager-bean
-				 */
-				try{ // Debug the AuthManager... getBean fails
-					
-					
-			          ServletContext servletContext = VaadinRequestHolder.getRequest().getSession().getServletContext();
-			          UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(tfusername.getValue(),tfpassword.getValue());
-			            token.setDetails( new WebAuthenticationDetails(VaadinRequestHolder.getRequest()));
-			            WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
-			            AuthenticationManager authManager = wac.getBean(AuthenticationManager.class);
-			            //AuthenticationManager authManager = (AuthenticationManager) wac.getBean("authenticationManager");
-			            Authentication authentication = authManager.authenticate(token);
-			            SecurityContextHolder.getContext().setAuthentication(authentication);
-			            if(authentication.isAuthenticated()){
-			              Notification.show("You are authenticated");
-			              nav.navigateTo("Main");
-			            	}
 
-
-			    } catch (BadCredentialsException e) {
-
-			      Notification.show("Bad credentials");
-			    }
-				//catch(NoSuchBeanDefinitionException b) {
-			    //	Notification.show("Caught no bean exception");
-			    //}
-			    
-				/*
-				 * End of Spring Security Magic
-				 */
+                LoginEvent loginEvent = new LoginEvent(tfusername.getValue(), tfpassword.getValue());
+                authEventBus.post(loginEvent);
+                tfusername.setValue("");
+                tfpassword.setValue("");
 			}
 		} );
 

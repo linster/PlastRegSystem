@@ -3,6 +3,10 @@ import java.io.File;
 
 import javax.servlet.annotation.WebServlet;
 
+import com.google.common.eventbus.EventBus;
+
+import org.plast.reg.events.*;
+
 import com.google.gwt.layout.client.Layout;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
@@ -14,6 +18,7 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.*;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Notification.Type;
 
 @SuppressWarnings("serial")
@@ -161,13 +166,20 @@ public class MainShellView extends Panel implements View{
 		
 	}
 	
+	Button bsignout = new Button("Sign out");
 	
-	private void initMainMenuLayout() {
+	private void initMainMenuLayout(final EventBus authBus) {
 		/** Initialize the System menubar. In here, there will be the Office-365-style switcher
 		 * 
 		 */
 		mainMenuLayout.addComponent(new Label("Welcome User!"));
-		mainMenuLayout.addComponent(new Button("Sign out"));
+		mainMenuLayout.addComponent(bsignout);
+		bsignout.addClickListener(new Button.ClickListener() {
+			@Override
+			public void buttonClick(ClickEvent event) {
+				authBus.post(new LogoutEvent());
+			}
+		});
 	}
 
 	@Override
@@ -182,9 +194,9 @@ public class MainShellView extends Panel implements View{
 		
 	}
 	
-	public MainShellView() {
+	public MainShellView(final EventBus authBus) {
 		initLayout();
-		initMainMenuLayout();
+		initMainMenuLayout(authBus);
 		initNavTree();
 		initNavTreeListeners();
 		apppanel.setContent(apppanelComponent);
