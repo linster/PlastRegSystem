@@ -14,7 +14,13 @@
     </user-service>
   </authentication-provider>
 </security:authentication-manager>
+
 <bean id="authenticationManager" class="org.springframework.security.authentication.AuthenticationManager"> 
+<authentication-provider>
+    <user-service>
+    <user name="bob" password="test" authorities="ROLE_USER" />
+    </user-service>
+  </authentication-provider>
 </bean>
 <beans:bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler">
   <beans:property name="invalidateHttpSession" value="false" />

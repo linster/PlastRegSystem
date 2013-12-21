@@ -1,6 +1,13 @@
 package com.example.dt;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.navigator.Navigator;
@@ -13,6 +20,15 @@ public class BootStrap extends UI {
 	@WebServlet(value = "/*", asyncSupported = true)
 	@VaadinServletConfiguration(productionMode = false, ui = BootStrap.class)
 	public static class Servlet extends VaadinServlet {
+		
+		  @Override
+		  protected void service(HttpServletRequest request,HttpServletResponse response) throws ServletException,IOException {
+		  SecurityContextHolder.setContext(SecurityContextHolder.createEmptyContext());
+		  VaadinRequestHolder.setRequest(request);
+		  super.service(request, response);
+		  VaadinRequestHolder.clean();
+		  SecurityContextHolder.clearContext();
+		  }
 	}
 	
 /** This is the main entry point of the Vaadin application.
