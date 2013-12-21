@@ -6,11 +6,15 @@ import org.plast.reg.ui.LoginView;
 import org.plast.reg.ui.MainShellView;
 import org.plast.reg.events.*;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import static com.vaadin.ui.Notification.TYPE_ERROR_MESSAGE;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.Navigator;
+import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -64,6 +68,24 @@ public class PlastregsystemUI extends UI {
 		//Register this class to the Authentication EventBus. (Some sort of magic 
 		//happens with the @Subscribe annotation that allows binding to the eventbus
 		authenticationBus.register(this);
+		
+		//Create a ViewChangeListener that respects the current Authentication state.
+		//This prevents people from just typing in stuff into the URL bar and getting 
+		//stuff that should be authenticated
+		nav.addViewChangeListener(new ViewChangeListener() {
+	        @Override
+	        public boolean beforeViewChange(ViewChangeEvent event) {
+	                if (event.getNewView() instanceof LoginView) {
+	                	return true;
+	                }
+
+	                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	                return authentication == null ? false : authentication.isAuthenticated();
+	        }
+	        @Override
+	        public void afterViewChange(ViewChangeEvent event) {}
+	});
+		
 	}
 
     @SuppressWarnings("deprecation")
@@ -72,12 +94,12 @@ public class PlastregsystemUI extends UI {
 
             AuthenticationService authHandler = new AuthenticationService();
     		Navigator nav = MasterNavigator.getInstance().getNav();
-
             try {
                     authHandler.handleAuthentication(event.getLogin(), event.getPassword(), VaadinRequestHolder.getRequest());
                     nav.navigateTo("Main");
             } catch (BadCredentialsException e) {
-                    Notification.show("Bad credentials");
+                    Notification.show("Invalid Username/Password. Please try again.",
+                    		Notification.Type.ERROR_MESSAGE);
             }
     }
 
