@@ -1,8 +1,11 @@
-package org.plast.reg;
+package org.plast.reg.ui;
 
 import java.io.File;
 
 import javax.servlet.ServletContext;
+
+import com.google.common.eventbus.EventBus;
+
 
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
@@ -13,6 +16,8 @@ import com.vaadin.server.VaadinService;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 
+import org.plast.reg.MasterNavigator;
+import org.plast.reg.VaadinRequestHolder;
 import org.springframework.*;
 import org.springframework.security.*;
 import org.springframework.security.authentication.AuthenticationManager;

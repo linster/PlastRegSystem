@@ -1,4 +1,4 @@
-package org.plast.reg;
+package org.plast.reg.ui;
 import java.io.File;
 
 import javax.servlet.annotation.WebServlet;
@@ -15,7 +15,6 @@ import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Notification.Type;
-import org.plast.reg.DummyTable;
 
 @SuppressWarnings("serial")
 @Theme("dt")
@@ -141,11 +140,11 @@ public class MainShellView extends Panel implements View{
 		 */
 		
 		if (parent.equals("null") && child.equals("DummyTable")){ //String.valueOf(Object) returns the string "null", not the null NULL.																
-			return new org.plast.reg.DummyTable();				  //This is the way to access a root element of the tree.	
+			return new org.plast.reg.ui.DummyTable();				  //This is the way to access a root element of the tree.	
 		}
 		
 		if (parent.equals("DummyTable") && child.equals("Add")){
-			return new org.plast.reg.DummyTable();
+			return new org.plast.reg.ui.DummyTable();
 		}
 		
 		if (parent.equals("null") && child.equals("Item 2")) {

@@ -42,6 +42,6 @@
 		<dependency org="org.springframework" rev="3.1.4.RELEASE" name="spring-parent"> </dependency>
 		<dependency org="org.springframework.security" rev="3.1.4.RELEASE" name="spring-security-web"> </dependency>
 		<dependency org="org.springframework.security" rev="3.1.4.RELEASE" name="spring-security-config"> </dependency>
-		
+		<dependency org="com.google.guava" name="guava" rev="15.0" />
 	</dependencies>
 </ivy-module>

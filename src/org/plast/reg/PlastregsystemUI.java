@@ -1,9 +1,9 @@
 package org.plast.reg;
 
 import org.plast.reg.LoginController;
-import org.plast.reg.LoginView;
 import org.plast.reg.MainShellControl;
-import org.plast.reg.MainShellView;
+import org.plast.reg.ui.LoginView;
+import org.plast.reg.ui.MainShellView;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.Navigator;

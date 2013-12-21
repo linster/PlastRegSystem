@@ -1,5 +1,7 @@
 package org.plast.reg;
 
+import org.plast.reg.ui.LoginView;
+
 public class LoginController {
 
 	public LoginController(LoginView lv) {
