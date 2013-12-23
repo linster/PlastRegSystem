@@ -6,6 +6,8 @@ import javax.servlet.annotation.WebServlet;
 import com.google.common.eventbus.EventBus;
 
 import org.plast.reg.events.*;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.google.gwt.layout.client.Layout;
 import com.vaadin.annotations.Theme;
@@ -46,11 +48,20 @@ public class MainShellView extends Panel implements View{
 	HorizontalLayout mainMenuLayout = new HorizontalLayout(); //Holds signin/switch user buttons, and welcome doo-dads.
 	final static String[][] navmenuitems = new String[][] {
 		new String[]{ "Home"},
-		new String[]{ "DummyTable", "Add", "Edit"},
-		new String[]{ "Item 2", "Child 1", "Child 2"}
+		new String[]{ "My Account", "Online Information", "Personal Information"},
+		new String[]{ "Registrations", "Ulad Registrations"},
+		new String[]{ "Finances", "Baly Balance"},
+		new String[]{ "Administrative", "Send Bug Report"}
 		};
 	
+	final static String[][] registrarOnlyMenuItems = new String[][] {
+		new String[] {"Registrations", "Register Person to Plast", "Create Family Unit", "Map Users to People", "Bulk Register into Ulady"},
+		new String[] {"Finances", "Adjust Baly Balance"}
+	};
 	
+	final static String[][] adminOnlyMenuItems = new String[][] {
+		new String[] {"Administrative", "Debug"}
+	};
 	
 	
 	private void initLayout() {
@@ -89,16 +100,19 @@ public class MainShellView extends Panel implements View{
 	grid.addComponent(apppanel, 1, 2);
 	
 	//TODO Make this app panel actually expand to the full window size. 
-	apppanel.setHeight("800px");
-	apppanel.setWidth("800px");
+	//apppanel.setHeight("800px");
+	//apppanel.setWidth("800px");
+	apppanel.setSizeFull();
 	//apppanel.setHeight("800px");
 	//apppanel.setWidth(grid.getWidth(), grid.getWidthUnits());
 	}
 	
-	private void initNavTree() {		
+	private void populateNavTree() {		
 		/** Populates the navigation tree of the main "Shell" with entries
 		 * 
 		 */
+		//Populate the tree with navmenuitems. This string[][] array contains
+		//all the items seen by non privileged users. 
 		for (String[] parent: navmenuitems){
 			navtree.addItem(parent[0]);
 			
@@ -116,6 +130,46 @@ public class MainShellView extends Panel implements View{
 			}
 		}
 		navtree.setImmediate(true);
+		
+		//Populate the tree with the administrative functions, but only if the user has the correct authorization level
+		
+		try{
+			Notification.show(SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString());
+			if (SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_REGISTRAR"))){
+				populatePrivNavTree(registrarOnlyMenuItems);
+			}
+			if (SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))){
+				populatePrivNavTree(adminOnlyMenuItems);
+			}
+		} catch(NullPointerException e){
+			//A NPE happens here if the mainView is initialzed before a login event. (There is no SecurityContextHolder.getContext()). 
+			//As a result, need to catch this.
+		}
+		
+	}
+	/**Helper function to populate the navTree with privaledged menu entries.
+	 * 
+	 * @param itemArray
+	 * This is the String[][] array to pass in. The first element must be the name of the parent element to extend.
+	 */
+	private void populatePrivNavTree(String[][] itemArray){
+		for (String[] parent: itemArray){
+			if (parent.length == 1) {
+				continue; //If there is nothing to add, then don't add it.
+			} else {
+				for (String child : parent) {
+					if (child.equals(parent[0])) //So I can use nice for notation
+						continue; 				 //without reprinting the parent
+					navtree.addItem(child);					
+					navtree.setParent(child, parent[0]);
+					navtree.setChildrenAllowed(child, false);
+				}
+				navtree.expandItemsRecursively(parent);
+			}
+		}
+		navtree.setImmediate(true);
+		
+		
 		
 	}
 	
@@ -142,13 +196,16 @@ public class MainShellView extends Panel implements View{
 	public Component NavTreeMethodDispatch(String parent, String child) {
 		/** Given a parent, child strings, return a component to set the app to. If no dispatch effective, set to null
 		 * @return Component. For use in the SetContent.
+		 * 
+		 * If there is no parent or child, match with the string "null"
+		 * For example: parent.equals("null") && child.equals("DummyTable")
 		 */
 		
 		if (parent.equals("null") && child.equals("DummyTable")){ //String.valueOf(Object) returns the string "null", not the null NULL.																
 			return new org.plast.reg.ui.DummyTable();				  //This is the way to access a root element of the tree.	
 		}
 		
-		if (parent.equals("DummyTable") && child.equals("Add")){
+		if (parent.equals("My Account") && child.equals("Online Information")){
 			return new org.plast.reg.ui.DummyTable();
 		}
 		
@@ -187,17 +244,17 @@ public class MainShellView extends Panel implements View{
 		/** This is the main hook that Vaadin uses when a view is changed.
 		 * 	The MasterNavigator generates a ViewChangeEvent which is passed into this method.
 		 * 
-		 *  This is probably a good place to put some SpringSecurity auth checking
+		 *  
 		 */
 		
-		Notification.show("Welcome to the main form");
+		//Notification.show("Welcome to the main form");
 		
 	}
 	
 	public MainShellView(final EventBus authBus) {
 		initLayout();
 		initMainMenuLayout(authBus);
-		initNavTree();
+		populateNavTree();
 		initNavTreeListeners();
 		apppanel.setContent(apppanelComponent);
 	}

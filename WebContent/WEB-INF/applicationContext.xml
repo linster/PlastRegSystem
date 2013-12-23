@@ -26,6 +26,22 @@
 		<beans:property name="invalidateHttpSession" value="false" />
 	</beans:bean>
 	
+	<!-- Add heirarchial roles -->
+	<!-- http://docs.spring.io/autorepo/docs/spring-security/3.1.4.RELEASE/reference/authz-arch.html -->
+	<!-- The following levels are allowed: Admin, Registar, Zviaskovy, (Vyhovnyk), Parent -->
+	<beans:bean id="roleVoter" class="org.springframework.security.access.vote.RoleHierarchyVoter">
+   		<beans:constructor-arg ref="roleHierarchy" />
+	</beans:bean>
+	<beans:bean id="roleHierarchy" class="org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl">
+    	<beans:property name="hierarchy">
+        	<beans:value>
+        	    ROLE_ADMIN > ROLE_REGISTRAR
+       	     	ROLE_REGISTRAR > ROLE_PARENT
+        	    ROLE_ZVIASKOVY > ROLE_PARENT
+       		</beans:value>
+    	</beans:property>
+	</beans:bean>
+	
 	<!-- Initialization for data source -->
 	<beans:bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<beans:property name="driverClassName" value="org.mariadb.jdbc.Driver" />

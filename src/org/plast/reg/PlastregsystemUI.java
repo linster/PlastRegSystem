@@ -40,6 +40,7 @@ public class PlastregsystemUI extends UI {
 	 *  	Navigate to the LoginView.
 	 */
 	
+	private boolean canRegisterMVC = false; //This variable holds whether MVCs can be registered. Set to true after login.
 	private EventBus authenticationBus = new EventBus();
 	
 	
@@ -49,21 +50,15 @@ public class PlastregsystemUI extends UI {
 		MasterNavigator.InstatiateNavigator(this, this);
 		Navigator nav = MasterNavigator.getInstance().getNav();
 		getPage().setTitle("Bootstrap Page");
-		
-		
-		//Set the ViewChangeListener onto the MasterNavigator so that unauthorized access is denied.
-		//nav.addViewChangeListener(new VaadinViewChangeCheck());
-		
-		//Initialize the MainShell view and controller
-		MainShellView msv = new MainShellView(authenticationBus);
-		MainShellControl msc = new MainShellControl(msv);
-		//Register the MainShellView to the MasterNavigator
-		nav.addView("Main", msv);
-		
+				
 		//Initialize the Login view and controller
 		LoginView lv = new LoginView(authenticationBus);
 		LoginController lc = new LoginController(lv);
 		nav.addView("", lv);
+		
+	
+			this.initMVC();
+		
 		
 		//Register this class to the Authentication EventBus. (Some sort of magic 
 		//happens with the @Subscribe annotation that allows binding to the eventbus
@@ -71,7 +66,7 @@ public class PlastregsystemUI extends UI {
 		
 		//Create a ViewChangeListener that respects the current Authentication state.
 		//This prevents people from just typing in stuff into the URL bar and getting 
-		//stuff that should be authenticated
+		//views that should be authenticated
 		nav.addViewChangeListener(new ViewChangeListener() {
 	        @Override
 	        public boolean beforeViewChange(ViewChangeEvent event) {
@@ -87,6 +82,19 @@ public class PlastregsystemUI extends UI {
 	});
 		
 	}
+	
+	
+	/**
+	 * Initializes all Models, Views, Controllers. Called in PlastregsystemUI.login() after a sucessful login event.
+	 */
+	protected void initMVC(){
+		Navigator nav = MasterNavigator.getInstance().getNav();		
+		//Initialize the MainShell view and controller
+		MainShellView msv = new MainShellView(authenticationBus);
+		MainShellControl msc = new MainShellControl(msv);
+		//Register the MainShellView to the MasterNavigator
+		nav.addView("Main", msv);
+	}
 
     @SuppressWarnings("deprecation")
 	@Subscribe
@@ -96,10 +104,12 @@ public class PlastregsystemUI extends UI {
     		Navigator nav = MasterNavigator.getInstance().getNav();
             try {
                     authHandler.handleAuthentication(event.getLogin(), event.getPassword(), VaadinRequestHolder.getRequest());
+                    //this.canRegisterMVC = true;
+                    //this.initMVC();
                     nav.navigateTo("Main");
             } catch (BadCredentialsException e) {
                     Notification.show("Invalid Username/Password. Please try again.",
-                    		Notification.Type.ERROR_MESSAGE);
+                    		Notification.Type.WARNING_MESSAGE);
             }
     }
 
