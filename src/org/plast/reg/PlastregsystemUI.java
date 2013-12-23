@@ -40,7 +40,9 @@ public class PlastregsystemUI extends UI {
 	 *  	Navigate to the LoginView.
 	 */
 	
-	private boolean canRegisterMVC = false; //This variable holds whether MVCs can be registered. Set to true after login.
+	
+	
+	
 	private EventBus authenticationBus = new EventBus();
 	
 	
@@ -54,11 +56,13 @@ public class PlastregsystemUI extends UI {
 		//Initialize the Login view and controller
 		LoginView lv = new LoginView(authenticationBus);
 		LoginController lc = new LoginController(lv);
-		nav.addView("", lv);
+		nav.addView("Login", lv);
 		
-	
-			this.initMVC();
-		
+		//Initialize the MainShell view and controller
+		MainShellView msv = new MainShellView(authenticationBus);
+		MainShellControl msc = new MainShellControl(msv);
+		//Register the MainShellView to the MasterNavigator
+		nav.addView("Main", msv);
 		
 		//Register this class to the Authentication EventBus. (Some sort of magic 
 		//happens with the @Subscribe annotation that allows binding to the eventbus
@@ -80,23 +84,12 @@ public class PlastregsystemUI extends UI {
 	        @Override
 	        public void afterViewChange(ViewChangeEvent event) {}
 	});
+		//Navigate to the login view
+		nav.navigateTo("Login");
 		
 	}
 	
-	
-	/**
-	 * Initializes all Models, Views, Controllers. Called in PlastregsystemUI.login() after a sucessful login event.
-	 */
-	protected void initMVC(){
-		Navigator nav = MasterNavigator.getInstance().getNav();		
-		//Initialize the MainShell view and controller
-		MainShellView msv = new MainShellView(authenticationBus);
-		MainShellControl msc = new MainShellControl(msv);
-		//Register the MainShellView to the MasterNavigator
-		nav.addView("Main", msv);
-	}
-
-    @SuppressWarnings("deprecation")
+   
 	@Subscribe
     public void login(LoginEvent event) {
 
@@ -104,8 +97,6 @@ public class PlastregsystemUI extends UI {
     		Navigator nav = MasterNavigator.getInstance().getNav();
             try {
                     authHandler.handleAuthentication(event.getLogin(), event.getPassword(), VaadinRequestHolder.getRequest());
-                    //this.canRegisterMVC = true;
-                    //this.initMVC();
                     nav.navigateTo("Main");
             } catch (BadCredentialsException e) {
                     Notification.show("Invalid Username/Password. Please try again.",
@@ -118,7 +109,7 @@ public class PlastregsystemUI extends UI {
 			Navigator nav = MasterNavigator.getInstance().getNav();
             AuthenticationService authHandler = new AuthenticationService();
             authHandler.handleLogout(VaadinRequestHolder.getRequest());
-            nav.navigateTo("");
+            nav.navigateTo("Login");
     }
 	
 	

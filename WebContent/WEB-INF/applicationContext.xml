@@ -28,10 +28,23 @@
 	
 	<!-- Add heirarchial roles -->
 	<!-- http://docs.spring.io/autorepo/docs/spring-security/3.1.4.RELEASE/reference/authz-arch.html -->
+	<!-- http://books.google.ca/books?id=VIqInfAXFaoC&pg=PA108&lpg=PA108&dq=getreachablegrantedauthorities&source=bl&ots=4sy_C-TDd7&sig=2MIGAqS2dUZqi-T-lyiegrNwFB8&hl=en&sa=X&ei=Od23UqTWCpDYoATKvICgBw&ved=0CEsQ6AEwBDgK#v=onepage&q=getreachablegrantedauthorities&f=false -->
+	<!-- Page 109 of "Pro Spring Security" -->
 	<!-- The following levels are allowed: Admin, Registar, Zviaskovy, (Vyhovnyk), Parent -->
+	
+	<beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+		<beans:constructor-arg>
+			<beans:list>
+				<beans:ref bean="roleVoter" />
+			</beans:list>
+		</beans:constructor-arg>
+	</beans:bean>
+	
 	<beans:bean id="roleVoter" class="org.springframework.security.access.vote.RoleHierarchyVoter">
    		<beans:constructor-arg ref="roleHierarchy" />
 	</beans:bean>
+	
+	
 	<beans:bean id="roleHierarchy" class="org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl">
     	<beans:property name="hierarchy">
         	<beans:value>

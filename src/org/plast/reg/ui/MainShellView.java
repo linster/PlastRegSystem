@@ -1,13 +1,19 @@
 package org.plast.reg.ui;
 import java.io.File;
+import java.util.Collection;
 
 import javax.servlet.annotation.WebServlet;
 
 import com.google.common.eventbus.EventBus;
 
+import org.plast.reg.AuthenticationService;
 import org.plast.reg.events.*;
+import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
+import org.springframework.security.access.hierarchicalroles.*;
+import org.springframework.security.core.*;
 
 import com.google.gwt.layout.client.Layout;
 import com.vaadin.annotations.Theme;
@@ -134,16 +140,18 @@ public class MainShellView extends Panel implements View{
 		//Populate the tree with the administrative functions, but only if the user has the correct authorization level
 		
 		try{
-			Notification.show(SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString());
-			if (SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_REGISTRAR"))){
+			//Create a list of all authorities reachable by my current authority.
+			Collection<SimpleGrantedAuthority> ga = AuthenticationService.GetAuthorities(this.currentAuth.getAuthorities());
+			if ( ga.contains(new SimpleGrantedAuthority("ROLE_REGISTRAR")) ){
 				populatePrivNavTree(registrarOnlyMenuItems);
 			}
-			if (SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))){
+			if ( ga.contains(new SimpleGrantedAuthority("ROLE_ADMIN"))){
 				populatePrivNavTree(adminOnlyMenuItems);
 			}
 		} catch(NullPointerException e){
 			//A NPE happens here if the mainView is initialzed before a login event. (There is no SecurityContextHolder.getContext()). 
 			//As a result, need to catch this.
+			Notification.show("NPE in Tree Populate", Notification.Type.ERROR_MESSAGE);
 		}
 		
 	}
@@ -209,8 +217,20 @@ public class MainShellView extends Panel implements View{
 			return new org.plast.reg.ui.DummyTable();
 		}
 		
-		if (parent.equals("null") && child.equals("Item 2")) {
-			return new Label("Item 2 root");
+		if (parent.equals("Administrative") && child.equals("Send Bug Report")) {
+			
+			Notification.show("Auths " + AuthenticationService.GetAuthorities(this.currentAuth.getAuthorities()).toString()  );
+			
+			/*
+			//RoleHierarchyImpl rhi = new RoleHierarchyImpl();
+			RoleHierarchy rhi = new RoleHierarchyImpl();
+			Collection<? extends GrantedAuthority> ca = currentAuth.getAuthorities();
+			Notification.show("CA " + ca.iterator().next().getAuthority());
+			Collection<? extends GrantedAuthority> ga = rhi.getReachableGrantedAuthorities(ca);
+			Notification.show(ga.toString());
+			return new Label("Debugging");
+			*/
+			return new Label("Debugging");
 		}
 		
 		if (parent.equals("Item 2") && child.equals("Child 1")){
@@ -239,6 +259,8 @@ public class MainShellView extends Panel implements View{
 		});
 	}
 
+	
+	Authentication currentAuth;
 	@Override
 	public void enter(ViewChangeEvent event) {
 		/** This is the main hook that Vaadin uses when a view is changed.
@@ -248,8 +270,10 @@ public class MainShellView extends Panel implements View{
 		 */
 		
 		//Notification.show("Welcome to the main form");
-		
+		this.currentAuth = SecurityContextHolder.getContext().getAuthentication();
+		populateNavTree(); //Need to repopulate the nav tree after authentication
 	}
+	
 	
 	public MainShellView(final EventBus authBus) {
 		initLayout();
