@@ -59,7 +59,7 @@ public class PlastregsystemUI extends UI {
 		nav.addView("Login", lv);
 		
 		//Initialize the MainShell view and controller
-		MainShellView msv = new MainShellView(authenticationBus);
+		MainShellView msv = new MainShellView(authenticationBus, "Main Screen");
 		MainShellControl msc = new MainShellControl(msv);
 		//Register the MainShellView to the MasterNavigator
 		nav.addView("Main", msv);

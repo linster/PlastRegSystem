@@ -87,17 +87,19 @@ public class LoginView extends Panel implements View {
 		blogin = new Button("Login");
 		flogin.addComponent(blogin);
 		
-		//Make a Vertical Layout to house the form layout
-		//So that we can center/center align the formlayout in the page
-		VerticalLayout vl = new VerticalLayout();
-		vl.setSizeFull();
-		vl.addComponent(flogin);
-		vl.setComponentAlignment(flogin, Alignment.TOP_RIGHT);
-		setContent(vl);
+		//Allow login form to be centered
+		GridLayout grid = new GridLayout(3,3);
+		setContent(grid);
+		grid.setColumnExpandRatio(0, 2);
+		grid.setColumnExpandRatio(1, 1);
+		grid.setColumnExpandRatio(2, 2);
+		grid.setRowExpandRatio(0, 2);
+		grid.setRowExpandRatio(1, 1);
+		grid.setRowExpandRatio(2, 2);
+		grid.setSizeFull();
+		grid.addComponent(flogin, 1,1); //Add login to grid layout
 		
 		
-		//BAD BAD BAD CODE
-		//Should be refactored into the controller for this.
 		blogin.addClickListener(new Button.ClickListener() { 
 			public void buttonClick(ClickEvent event) {
 
