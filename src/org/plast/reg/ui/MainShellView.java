@@ -7,6 +7,7 @@ import javax.servlet.annotation.WebServlet;
 import com.google.common.eventbus.EventBus;
 
 import org.plast.reg.AuthenticationService;
+import org.plast.reg.MasterNavigator;
 import org.plast.reg.events.*;
 import org.plast.reg.util.*;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
@@ -61,7 +62,16 @@ public class MainShellView extends Panel implements View{
 	
 	Tree navtree = new Tree("Navigation");
 	Panel apppanel = new Panel("Application View");
-	Component apppanelComponent = new Label("Test");
+	protected Component apppanelComponent = new Label("Empty Component");
+	
+	/**
+	 * Sets the component of the main window to be the component given as a parameter to the method.
+	 * @param component
+	 */
+	protected void setApplicationComponent(Component component){
+		apppanelComponent = component;
+	}
+	
 	HorizontalLayout mainMenuLayout = new HorizontalLayout(); //Holds signin/switch user buttons, and welcome doo-dads.
 	final static String[][] navmenuitems = new String[][] {
 		new String[]{ "Home"},
@@ -169,8 +179,9 @@ public class MainShellView extends Panel implements View{
 					final String selectedItem = String.valueOf(event.getProperty().getValue());
 					final String parent = String.valueOf(navtree.getParent(navtree.getValue()));
 					//Ok, so we can grab the selected item and it's parent. 
-					try {
-						apppanelComponent = NavTreeMethodDispatch(parent, selectedItem);
+					try { 
+						//apppanelComponent = NavTreeChangeView(parent, selectedItem);
+						NavTreeChangeView(parent, selectedItem);
 					} catch (NoAuthenticationException e) {
 						e.printStackTrace();
 					}
@@ -179,6 +190,13 @@ public class MainShellView extends Panel implements View{
 				
 			}
 		});
+	}
+	
+	public void NavTreeChangeView(String parent, String child) throws NoAuthenticationException {
+		if (parent.equals("My Account") && child.equals("Online Information")){
+			MasterNavigator.getInstance().getNav().navigateTo("My_Account__Online_Information");
+			
+		}
 	}
 	
 	public Component NavTreeMethodDispatch(String parent, String child) throws NoAuthenticationException {
@@ -197,12 +215,13 @@ public class MainShellView extends Panel implements View{
 		}
 		
 		if (parent.equals("My Account") && child.equals("Online Information")){
-			return new org.plast.reg.ui.DummyTable();
+			MasterNavigator.getInstance().getNav().navigateTo("My_Account__Online_Information");
+			return new Label("My Account / Online Information");
 		}
 		
 		if (parent.equals("Administrative") && child.equals("Send Bug Report")) {			
 			Notification.show("Auths " + AuthenticationService.GetAuthorities(getAuthentication().getAuthorities()).toString()  );
-			return new Label("Debugging");
+			return new Label("Debugging information");
 		}
 		
 		if (parent.equals("Item 2") && child.equals("Child 1")){

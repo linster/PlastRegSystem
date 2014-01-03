@@ -4,6 +4,7 @@ import org.plast.reg.LoginController;
 import org.plast.reg.MainShellControl;
 import org.plast.reg.ui.LoginView;
 import org.plast.reg.ui.MainShellView;
+import org.plast.reg.ui.MyAccount_OnlineInformation_View;
 import org.plast.reg.events.*;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -64,6 +65,14 @@ public class PlastregsystemUI extends UI {
 		//Register the MainShellView to the MasterNavigator
 		nav.addView("Main", msv);
 		
+		//Initialize the Online Information Manager View and Controller
+		//TODO: Still using a dummy controller
+		MyAccount_OnlineInformation_View mov = new MyAccount_OnlineInformation_View(authenticationBus, "Online Account Information");
+		nav.addView("My_Account__Online_Information", mov);
+		
+		
+		
+		
 		//Register this class to the Authentication EventBus. (Some sort of magic 
 		//happens with the @Subscribe annotation that allows binding to the eventbus
 		authenticationBus.register(this);
@@ -97,7 +106,8 @@ public class PlastregsystemUI extends UI {
     		Navigator nav = MasterNavigator.getInstance().getNav();
             try {
                     authHandler.handleAuthentication(event.getLogin(), event.getPassword(), VaadinRequestHolder.getRequest());
-                    nav.navigateTo("Main");
+                    //nav.navigateTo("Main");
+                    nav.navigateTo("My_Account__Online_Information");
             } catch (BadCredentialsException e) {
                     Notification.show("Invalid Username/Password. Please try again.",
                     		Notification.Type.WARNING_MESSAGE);
