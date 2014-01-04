@@ -185,7 +185,7 @@ public class MainShellView extends Panel implements View{
 					} catch (NoAuthenticationException e) {
 						e.printStackTrace();
 					}
-					apppanel.setContent(apppanelComponent);
+					
 				}
 				
 			}
@@ -194,6 +194,7 @@ public class MainShellView extends Panel implements View{
 	
 	public void NavTreeChangeView(String parent, String child) throws NoAuthenticationException {
 		if (parent.equals("My Account") && child.equals("Online Information")){
+			Notification.show("Nav to");
 			MasterNavigator.getInstance().getNav().navigateTo("My_Account__Online_Information");
 			
 		}
@@ -343,7 +344,7 @@ private void initLayout() {
 			initMainMenuLayout(authBus);
 			populateNavTree();
 			initNavTreeListeners();
-			apppanel.setContent(apppanelComponent);
+			//apppanel.setContent(apppanelComponent);
 		} catch(NoAuthenticationException e){
 			e.printStackTrace();
 		}

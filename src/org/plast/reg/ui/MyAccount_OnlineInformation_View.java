@@ -22,8 +22,8 @@ public class MyAccount_OnlineInformation_View extends MainShellView
 			//Set the main application component to be a label.
 			//In the future, we'll probably define a FormLayout, pack a bunch of fields into it, and then add the layout into the line below.
 			//super.setApplicationComponent(new Label("Online Account Manager"));
-
-			apppanel.setContent(layout);
+			
+			this.apppanel.setContent(layout);
 		}
 	
 
