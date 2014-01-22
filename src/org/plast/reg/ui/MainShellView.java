@@ -2,12 +2,13 @@ package org.plast.reg.ui;
 import java.io.File;
 import java.util.Collection;
 
-import javax.servlet.annotation.WebServlet;
+//import javax.servlet.annotation.WebServlet;
 
 import com.google.common.eventbus.EventBus;
 
 import org.plast.reg.AuthenticationService;
 import org.plast.reg.MasterNavigator;
+import org.plast.reg.PlastregsystemUI;
 import org.plast.reg.events.*;
 import org.plast.reg.util.*;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
@@ -24,6 +25,7 @@ import com.vaadin.data.Property.*;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileResource;
+import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinServlet;
@@ -52,7 +54,7 @@ public class MainShellView extends Panel implements View{
 	/**
 	 * This is the title shown on the page. (Titlebar and heading)
 	 */
-	protected String pagetitle = "Main Screen";
+	protected String pagetitle = "PlastOnline";
 	protected String getPageTitle() {
 		return this.pagetitle;
 	}
@@ -61,16 +63,9 @@ public class MainShellView extends Panel implements View{
 	}
 	
 	Tree navtree = new Tree("Navigation");
-	Panel apppanel = new Panel("Application View");
-	protected Component apppanelComponent = new Label("Empty Component");
+	public Panel apppanel = new Panel("Application View");
 	
-	/**
-	 * Sets the component of the main window to be the component given as a parameter to the method.
-	 * @param component
-	 */
-	protected void setApplicationComponent(Component component){
-		apppanelComponent = component;
-	}
+	
 	
 	HorizontalLayout mainMenuLayout = new HorizontalLayout(); //Holds signin/switch user buttons, and welcome doo-dads.
 	final static String[][] navmenuitems = new String[][] {
@@ -179,12 +174,8 @@ public class MainShellView extends Panel implements View{
 					final String selectedItem = String.valueOf(event.getProperty().getValue());
 					final String parent = String.valueOf(navtree.getParent(navtree.getValue()));
 					//Ok, so we can grab the selected item and it's parent. 
-					try { 
-						//apppanelComponent = NavTreeChangeView(parent, selectedItem);
-						NavTreeChangeView(parent, selectedItem);
-					} catch (NoAuthenticationException e) {
-						e.printStackTrace();
-					}
+					NavTreeChangeView(parent, selectedItem);
+					
 					
 				}
 				
@@ -192,48 +183,28 @@ public class MainShellView extends Panel implements View{
 		});
 	}
 	
-	public void NavTreeChangeView(String parent, String child) throws NoAuthenticationException {
+	public void NavTreeChangeView(String parent, String child) {
+		if (parent.equals("Home") && child.equals("null")){
+			UI.getCurrent().getNavigator().navigateTo("Main");
+		}
+		
 		if (parent.equals("My Account") && child.equals("Online Information")){
 			Notification.show("Nav to");
-			MasterNavigator.getInstance().getNav().navigateTo("My_Account__Online_Information");
+				//MasterNavigator.getInstance().getNav().navigateTo("My_Account__Online_Information");
+			Notification.show("UI ID"+ UI.getCurrent().getId());	
+			UI.getCurrent().getNavigator().navigateTo("My_Account__Online_Information");
 			
+			//This is actually working... Need to refactor.
+			//Have the navigator change the view in the Panel.
+			//https://github.com/thomasletsch/javaee-addon/blob/master/src/main/java/org/vaadin/addons/javaee/PortalUI.java#L62
+			
+			//UI.getCurrent().getNavigator().navigateTo("Login");
+			
+			Notification.show("getState(): "+ UI.getCurrent().getNavigator().getState());
 		}
 	}
 	
-	public Component NavTreeMethodDispatch(String parent, String child) throws NoAuthenticationException {
-		/** Given a parent, child strings, return a component to set the app to. If no dispatch effective, set to null
-		 * @return Component. For use in the SetContent.
-		 * 
-		 * If there is no parent or child, match with the string "null"
-		 * For example: parent.equals("null") && child.equals("DummyTable")
-		 */
-		//String.valueOf(Object) returns the string "null", not the null NULL.
-		//This is the way to access a root element of the tree.	
-		
-		//TODO: Change this method to navigate to views in the MasterNavigator
-		if (parent.equals("null") && child.equals("DummyTable")){ 																
-			return new org.plast.reg.ui.DummyTable();				 
-		}
-		
-		if (parent.equals("My Account") && child.equals("Online Information")){
-			MasterNavigator.getInstance().getNav().navigateTo("My_Account__Online_Information");
-			return new Label("My Account / Online Information");
-		}
-		
-		if (parent.equals("Administrative") && child.equals("Send Bug Report")) {			
-			Notification.show("Auths " + AuthenticationService.GetAuthorities(getAuthentication().getAuthorities()).toString()  );
-			return new Label("Debugging information");
-		}
-		
-		if (parent.equals("Item 2") && child.equals("Child 1")){
-			return new Label("Item 2 Child 1");
-		}
-		
-		
-		return new Label("Nothing selected");
-		
-		
-	}
+	
 	
 private void initLayout() {
 		/** Draws a layout something similar to 
@@ -282,13 +253,16 @@ private void initLayout() {
 	
 	Button bsignout = new Button("Sign out");
 	
-	private void initMainMenuLayout(final EventBus authBus) throws NoAuthenticationException {
+	private void initMainMenuLayout(final EventBus authBus) {
 		/** Initialize the System menubar. In here, there will be the Office-365-style switcher
 		 * 
 		 */
 		
-		
+		try {
 		mainMenuLayout.addComponent(new Label("Welcome "+getAuthentication().getName()+"!"));
+		} catch (NoAuthenticationException e) {
+			e.printStackTrace();
+		}
 		mainMenuLayout.addComponent(bsignout);
 		bsignout.addClickListener(new Button.ClickListener() {
 			@Override
@@ -325,6 +299,8 @@ private void initLayout() {
 		rebuildView();
 	}
 	
+	
+	
 	protected final EventBus authBus; //Stores the authBus used for logout events.
 	
 	
@@ -340,15 +316,29 @@ private void initLayout() {
 		EventBus authBus = this.authBus;
 		
 		try {
-			initLayout();
-			initMainMenuLayout(authBus);
-			populateNavTree();
-			initNavTreeListeners();
-			//apppanel.setContent(apppanelComponent);
-		} catch(NoAuthenticationException e){
+			getAuthentication();
+		} catch (NoAuthenticationException e) {
+			initLayout(); //Draw main form only, no tree view or panel
 			e.printStackTrace();
-		}
+			return;
+		} 
+		
+		//If we made it to here, we must be logged in, so initialize all the things
+		initLayout();
+		initMainMenuLayout(authBus);
+		populateNavTree();
+		initNavTreeListeners();
+
 	}
+	
+	/**
+	 * Handles hiding all the nav/features when logging out
+	 */
+	public void handleLogout() {
+		this.navtree.removeAllItems();
+		this.mainMenuLayout.removeAllComponents();
+	}
+	
 	
 
 }

@@ -9,7 +9,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Application;
+//import javax.ws.rs.core.Application;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 

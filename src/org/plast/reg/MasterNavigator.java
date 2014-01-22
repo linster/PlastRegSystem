@@ -25,7 +25,7 @@ public class MasterNavigator {
 		return instance;
 	}
 	
-	public static void InstatiateNavigator(UI ui, SingleComponentContainer scc) {
+	public void InstatiateNavigator(UI ui, SingleComponentContainer scc) {
 		navigator = new Navigator(ui, scc);
 	}
 	

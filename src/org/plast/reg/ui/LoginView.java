@@ -69,7 +69,7 @@ public class LoginView extends Panel implements View {
 		Image logoimage = new Image("", rlogoimage);
 		logoimage.setHeight("80px");
 		logolayout.addComponent(logoimage);
-		Label main = new Label("<h1>PlastOnline</h1>",Label.CONTENT_XHTML);
+		Label main = new Label("<h1>Login</h1>",Label.CONTENT_XHTML);
 		logolayout.addComponent(main);
 		logolayout.setComponentAlignment(main, Alignment.BOTTOM_CENTER );
 		
