@@ -4,8 +4,10 @@ import java.util.Collection;
 
 //import javax.servlet.annotation.WebServlet;
 
+
 import com.google.common.eventbus.EventBus;
 
+import org.plast.reg.AuthenticationHolder;
 import org.plast.reg.AuthenticationService;
 import org.plast.reg.MasterNavigator;
 import org.plast.reg.PlastregsystemUI;
@@ -184,8 +186,10 @@ public class MainShellView extends Panel implements View{
 	}
 	
 	public void NavTreeChangeView(String parent, String child) {
-		if (parent.equals("Home") && child.equals("null")){
+		if (parent.equals("My Account") && child.equals("Personal Information")){
 			UI.getCurrent().getNavigator().navigateTo("Main");
+			Notification.show("getState(): "+ UI.getCurrent().getNavigator().getState());
+			
 		}
 		
 		if (parent.equals("My Account") && child.equals("Online Information")){
@@ -194,14 +198,14 @@ public class MainShellView extends Panel implements View{
 			Notification.show("UI ID"+ UI.getCurrent().getId());	
 			UI.getCurrent().getNavigator().navigateTo("My_Account__Online_Information");
 			
-			//This is actually working... Need to refactor.
-			//Have the navigator change the view in the Panel.
-			//https://github.com/thomasletsch/javaee-addon/blob/master/src/main/java/org/vaadin/addons/javaee/PortalUI.java#L62
-			
-			//UI.getCurrent().getNavigator().navigateTo("Login");
-			
 			Notification.show("getState(): "+ UI.getCurrent().getNavigator().getState());
 		}
+		
+		if (parent.equals("Home") && child.equals("null")){
+			Notification.show("Pressed HOME");
+		}
+		
+		
 	}
 	
 	
@@ -285,7 +289,12 @@ private void initLayout() {
 	}
 	
 	public void setAuthentication(Authentication auth){
-		this.currentAuth = auth;
+		if (auth != null ){
+			this.currentAuth = auth;
+		} else {
+			Notification.show("MSV setAuth called with null Authentication");
+			this.currentAuth = AuthenticationHolder.getAuthentication();
+		}
 	}
 	
 	@Override
@@ -319,7 +328,7 @@ private void initLayout() {
 			getAuthentication();
 		} catch (NoAuthenticationException e) {
 			initLayout(); //Draw main form only, no tree view or panel
-			e.printStackTrace();
+			//e.printStackTrace();
 			return;
 		} 
 		

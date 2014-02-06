@@ -6,6 +6,7 @@ import org.plast.reg.ui.LoginView;
 import org.plast.reg.ui.MainShellView;
 import org.plast.reg.ui.MainView;
 import org.plast.reg.ui.MyAccount_OnlineInformation_View;
+import org.plast.reg.util.ViewChangeSecurityChecker;
 import org.plast.reg.events.*;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -55,7 +56,8 @@ public class PlastregsystemUI extends UI {
 	
 	@Override
 	protected void init(VaadinRequest request) {
-
+		SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+		
 		//Initialize the MainShell view and controller
 		msv = new MainShellView(authenticationBus, "Main Screen");
 		setContent(msv);
@@ -79,8 +81,8 @@ public class PlastregsystemUI extends UI {
 		
 		//Initialize the Online Information Manager View and Controller
 		//TODO: Still using a dummy controller
-		//MyAccount_OnlineInformation_View mov = new MyAccount_OnlineInformation_View(authenticationBus, "Online Account Information");
-		//nav.addView("My_Account__Online_Information", mov);
+		MyAccount_OnlineInformation_View mov = new MyAccount_OnlineInformation_View();
+		nav.addView("My_Account__Online_Information", mov);
 		
 		
 
@@ -92,19 +94,8 @@ public class PlastregsystemUI extends UI {
 		//Create a ViewChangeListener that respects the current Authentication state.
 		//This prevents people from just typing in stuff into the URL bar and getting 
 		//views that should be authenticated
-		nav.addViewChangeListener(new ViewChangeListener() {
-	        @Override
-	        public boolean beforeViewChange(ViewChangeEvent event) {
-	                if (event.getNewView() instanceof LoginView) {
-	                	return true;
-	                }
-
-	                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	                return authentication == null ? false : authentication.isAuthenticated();
-	        }
-	        @Override
-	        public void afterViewChange(ViewChangeEvent event) {}
-	});
+		
+		nav.addViewChangeListener(new ViewChangeSecurityChecker());
 		//Navigate to the login view
 		nav.navigateTo("Login");
 		
@@ -115,10 +106,11 @@ public class PlastregsystemUI extends UI {
     public void login(LoginEvent event) {
 
             AuthenticationService authHandler = new AuthenticationService();
-    		//Navigator nav = MasterNavigator.getInstance().getNav();
             Navigator nav = UI.getCurrent().getNavigator();
             try {
                     authHandler.handleAuthentication(event.getLogin(), event.getPassword(), VaadinRequestHolder.getRequest());
+                    // Set the Authentication object into a Thread_Local so that the view change checker works.
+                    AuthenticationHolder.setAuthentication(SecurityContextHolder.getContext().getAuthentication());
                     msv.setAuthentication(SecurityContextHolder.getContext().getAuthentication());
                     msv.rebuildView();
                     nav.navigateTo("Main");
@@ -131,9 +123,16 @@ public class PlastregsystemUI extends UI {
 
     @Subscribe
     public void logout(LogoutEvent event) {
-			//Navigator nav = MasterNavigator.getInstance().getNav();
 			Navigator nav = UI.getCurrent().getNavigator();
 			AuthenticationService authHandler = new AuthenticationService();
+			//Clear the Thread_Local-stored Authentication object. (Stored so the view change listener checker works
+			/** BUG:
+			 * 	If you log out of the system, then type in the URL for a protected page again, the page will display. If you create a 
+			 *  new tab (or a new browser session), page protection works properly. A user who was never authenticated still cannot view
+			 *  a protected page, however. For some reason, if I clear the THREAD_LOCAL Authentication object in the Logout Handler, the 
+			 *  ViewChangeSecurityChecker doesn't work.
+			 */
+			//AuthenticationHolder.clean();
             authHandler.handleLogout(VaadinRequestHolder.getRequest());
             msv.handleLogout();
             nav.navigateTo("Login");

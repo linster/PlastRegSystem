@@ -19,14 +19,16 @@ import com.vaadin.server.VaadinServlet;
 import com.vaadin.server.VaadinServletRequest;
 import com.vaadin.server.VaadinServletResponse;
 import com.vaadin.server.VaadinServletService;
-
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
 @SuppressWarnings("serial")
 public class VaadinServletServiceOverride extends VaadinServlet { 
 
 @Override
 protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	
 	SecurityContextHolder.setContext(SecurityContextHolder.createEmptyContext());
+	
 	VaadinRequestHolder.setRequest(request);
 	super.service(request, response);
 	// We remove the request from the thread local, there's no reason to keep it once the work is done

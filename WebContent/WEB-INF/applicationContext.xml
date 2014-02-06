@@ -55,6 +55,16 @@
     	</beans:property>
 	</beans:bean>
 	
+	<!-- Initialize Spring Security Filter Chain -->
+		<beans:bean id="securityContextPersistenceFilter"
+    		class="org.springframework.security.web.context.SecurityContextPersistenceFilter">
+  		<beans:property name='securityContextRepository'>
+    		<beans:bean class='org.springframework.security.web.context.HttpSessionSecurityContextRepository'>
+      		<beans:property name='allowSessionCreation' value='true' />
+    		</beans:bean>
+  		</beans:property>
+		</beans:bean>
+	
 	<!-- Initialization for data source -->
 	<beans:bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<beans:property name="driverClassName" value="org.mariadb.jdbc.Driver" />
