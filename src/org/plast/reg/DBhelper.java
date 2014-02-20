@@ -12,7 +12,8 @@ public class DBhelper {
 	 */
 	//If you're messing around in LibreOffice base, the driver string is org.openoffice.comp.drivers.MySQL.Driver
     private JDBCConnectionPool connectionPool = null;
-	private static String url = "jdbc:mysql://localhost:3306/dummy";
+	//private static String url = "jdbc:mysql://localhost:3306/dummy";
+    private static String url = "jdbc:mysql://stefanm.ca:3306/plastonline";
 	public static String username = "vaadin";
 	public static String password = "vaadin1";
 

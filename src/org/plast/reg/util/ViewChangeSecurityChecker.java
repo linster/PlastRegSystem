@@ -21,7 +21,13 @@ public class ViewChangeSecurityChecker implements ViewChangeListener {
             	 /* BUG FIX: For some reason the Authentication object we need was not passed from the LoginEvent in 
             	  * PlastRegSystemUI (probably because this ViewChangerListener was initialized before a login happened).
             	  */
-             	Authentication thread_local = AuthenticationHolder.getAuthentication();
+             	Authentication thread_local = null;
+				try {
+					thread_local = AuthenticationHolder.getAuthentication();
+				} catch (NoAuthenticationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
              		if (thread_local == null){
              			return false;
              		} else {

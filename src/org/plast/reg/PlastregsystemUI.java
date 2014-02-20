@@ -6,6 +6,7 @@ import org.plast.reg.ui.LoginView;
 import org.plast.reg.ui.MainShellView;
 import org.plast.reg.ui.MainView;
 import org.plast.reg.ui.MyAccount_OnlineInformation_View;
+import org.plast.reg.ui.MyAccount_PersonalInformation_View;
 import org.plast.reg.util.ViewChangeSecurityChecker;
 import org.plast.reg.events.*;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -59,7 +60,7 @@ public class PlastregsystemUI extends UI {
 		SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
 		
 		//Initialize the MainShell view and controller
-		msv = new MainShellView(authenticationBus, "Main Screen");
+		msv = new MainShellView(authenticationBus, "Plast Online");
 		setContent(msv);
 		//Create the MasterNavigator and initialize it
 		this.nav = new Navigator(PlastregsystemUI.this, this.msv.apppanel);
@@ -84,7 +85,8 @@ public class PlastregsystemUI extends UI {
 		MyAccount_OnlineInformation_View mov = new MyAccount_OnlineInformation_View();
 		nav.addView("My_Account__Online_Information", mov);
 		
-		
+		MyAccount_PersonalInformation_View mpv = new MyAccount_PersonalInformation_View();
+		nav.addView("My_Account__Personal_Information", mpv);
 
 		
 		//Register this class to the Authentication EventBus. (Some sort of magic 

@@ -5,6 +5,7 @@ import java.util.Collection;
 //import javax.servlet.annotation.WebServlet;
 
 
+
 import com.google.common.eventbus.EventBus;
 
 import org.plast.reg.AuthenticationHolder;
@@ -65,30 +66,34 @@ public class MainShellView extends Panel implements View{
 	}
 	
 	Tree navtree = new Tree("Navigation");
-	public Panel apppanel = new Panel("Application View");
+	public Panel apppanel = new Panel("");
 	
 	
 	
 	HorizontalLayout mainMenuLayout = new HorizontalLayout(); //Holds signin/switch user buttons, and welcome doo-dads.
 	final static String[][] navmenuitems = new String[][] {
-		new String[]{ "Home"},
-		new String[]{ "My Account", "Online Information", "Personal Information"},
-		new String[]{ "Registrations", "Ulad Registrations"},
-		new String[]{ "Finances", "Baly Balance"},
+		new String[]{ "Home", "Main"},
+		new String[]{ "My Account", "Online Account", "Personal Information"},
+		new String[]{ "Registrations", "My Ulad"},
+		new String[]{ "Registrar"},
+		new String[]{ "Ulady"},
+		new String[]{ "Finances", "My Account Balance"},
 		new String[]{ "Administrative", "Send Bug Report"}
 		};
 	
 	final static String[][] registrarOnlyMenuItems = new String[][] {
-		new String[] {"Registrations", "Register Person to Plast", "Create Family Unit", "Map Users to People", "Bulk Register into Ulady"},
+		new String[] {"Registrations", "Associate People to Family Unit", "Map User Accounts to People"},
+		new String[] {"Registrar", "Register New Person", "Renew/Modify Existing Membership", "Create User Account"},
+		new String[] {"Ulady", "Bulk Register into Ulady", "View/Edit Ulad Rosters"},
 		new String[] {"Finances", "Adjust Baly Balance"}
 	};
 	
 	final static String[][] adminOnlyMenuItems = new String[][] {
-		new String[] {"Administrative", "Debug"}
+		new String[] {"Administrative", "Debug", "Technical Information"}
 	};
 	
 	final static String[][] zviaskovyOnlyMenuItems = new String[][] {
-		new String[] {"Registrations", "View Rosters"}
+		new String[] {"Ulady", "View/Edit Ulad Rosters"}
 	};
 	
 	
@@ -186,19 +191,18 @@ public class MainShellView extends Panel implements View{
 	}
 	
 	public void NavTreeChangeView(String parent, String child) {
-		if (parent.equals("My Account") && child.equals("Personal Information")){
+		if (parent.equals("Home") && child.equals("Main")){
 			UI.getCurrent().getNavigator().navigateTo("Main");
 			Notification.show("getState(): "+ UI.getCurrent().getNavigator().getState());
 			
 		}
 		
-		if (parent.equals("My Account") && child.equals("Online Information")){
-			Notification.show("Nav to");
-				//MasterNavigator.getInstance().getNav().navigateTo("My_Account__Online_Information");
-			Notification.show("UI ID"+ UI.getCurrent().getId());	
+		if (parent.equals("My Account") && child.equals("Online Account")){	
 			UI.getCurrent().getNavigator().navigateTo("My_Account__Online_Information");
-			
-			Notification.show("getState(): "+ UI.getCurrent().getNavigator().getState());
+		}
+		
+		if (parent.equals("My Account") && child.equals("Personal Information")){
+			UI.getCurrent().getNavigator().navigateTo("My_Account__Personal_Information");
 		}
 		
 		if (parent.equals("Home") && child.equals("null")){
@@ -293,7 +297,12 @@ private void initLayout() {
 			this.currentAuth = auth;
 		} else {
 			Notification.show("MSV setAuth called with null Authentication");
-			this.currentAuth = AuthenticationHolder.getAuthentication();
+			try {
+				this.currentAuth = AuthenticationHolder.getAuthentication();
+			} catch (NoAuthenticationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	

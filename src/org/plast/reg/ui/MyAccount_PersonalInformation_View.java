@@ -8,7 +8,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.*;
 
-public class MyAccount_OnlineInformation_View extends Panel implements View {
+public class MyAccount_PersonalInformation_View extends Panel implements View {
 
 @Override
 public void enter(ViewChangeEvent event) {
@@ -20,7 +20,7 @@ public void enter(ViewChangeEvent event) {
 	}
 }
 
-public MyAccount_OnlineInformation_View() {
+public MyAccount_PersonalInformation_View() {
 	try {
 		buildLayout();
 	} catch (NoAuthenticationException e) {
@@ -30,31 +30,38 @@ public MyAccount_OnlineInformation_View() {
 
 public void buildLayout() throws NoAuthenticationException{
 	VerticalLayout layout = new VerticalLayout();
-	Label heading = new Label ("<h1>User Account Information</h1>", Label.CONTENT_XHTML.HTML);
+	Label heading = new Label ("<h1>Personal Information</h1>", Label.CONTENT_XHTML.HTML);
 	layout.addComponent(heading);
 	
 	/* Make a form layout */
 	FormLayout fl = new FormLayout();
 	
 	String username = AuthenticationHolder.getAuthentication().getName();
-	//String username = "bob";
 	
-	TextField tfusername = new TextField("Username:", username);
-	tfusername.setReadOnly(true);
+	
+	TextField TFfirstname = new TextField("First name:");
+	TextField TFlastname = new TextField("Last Name:");
+	TextField TFmiddlename = new TextField("Middle Name:");
+	//Date picker for birthdate
+	DateField DFbirthdate = new DateField("Birth Date");
+	//TODO: INPUT VALIDATOR
+	Label lphone = new Label("Input a phone number in the form: (780)492-5555");
+	TextField TFphone = new TextField("Phone Number:");
+	TextField TFcellphone = new TextField("Cell Phone:");
+	
 	TextField tfcontactemail = new TextField("Contact Email Address:");
-	Label newpass = new Label("If you do not want to change your password, leave "
-			+ "the fields below blank");
-	TextField tfnewpass = new TextField("Type a new password:");
-	TextField tfconfnewpass = new TextField("Confirm new password:");
+	
 	Button bsubmit = new Button("Submit");
 	
-	fl.addComponent(tfusername);
+	fl.addComponent(TFfirstname);
+	fl.addComponent(TFlastname);
+	fl.addComponent(TFmiddlename);
+	fl.addComponent(DFbirthdate);
+	fl.addComponent(lphone);
+	fl.addComponent(TFphone);
+	fl.addComponent(TFcellphone);
 	fl.addComponent(tfcontactemail);
-	fl.addComponent(newpass);
-	fl.addComponent(tfnewpass);
-	fl.addComponent(tfconfnewpass);
 	fl.addComponent(bsubmit);
-	
 	
 	layout.addComponent(fl);
 	setContent(layout);

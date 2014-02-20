@@ -13,6 +13,7 @@ public class MainView extends Panel implements View {
 	public void enter(ViewChangeEvent event) {
 		// TODO Auto-generated method stub
 		Notification.show("Entered the MainView");
+		buildLayout();
 	}
 	
 	public MainView() {
