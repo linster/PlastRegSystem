@@ -82,7 +82,7 @@ public class PlastregsystemUI extends UI {
 		
 		//Initialize the Online Information Manager View and Controller
 		//TODO: Still using a dummy controller
-		MyAccount_OnlineInformation_View mov = new MyAccount_OnlineInformation_View();
+		MyAccount_OnlineInformation_View mov = new MyAccount_OnlineInformation_View(null);
 		nav.addView("My_Account__Online_Information", mov);
 		
 		MyAccount_PersonalInformation_View mpv = new MyAccount_PersonalInformation_View();
