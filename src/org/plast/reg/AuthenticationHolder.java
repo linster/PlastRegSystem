@@ -6,24 +6,24 @@ import org.springframework.security.core.Authentication;
 
 public class AuthenticationHolder {
 
-	public static final ThreadLocal<Authentication> THREAD_GLOBAL = new ThreadLocal<Authentication>();
+	public static final ThreadLocal<Authentication> THREAD_LOCAL = new ThreadLocal<Authentication>();
 
 	public static Authentication getAuthentication() throws NoAuthenticationException {
-		if (THREAD_GLOBAL.get() == null ){
+		if (THREAD_LOCAL.get() == null ){
 			throw new NoAuthenticationException();
 		} else {
-			return THREAD_GLOBAL.get();
+			return THREAD_LOCAL.get();
 		}
 	}
 	
 	static void setAuthentication(Authentication auth) {
 		
-		THREAD_GLOBAL.set(auth);
+		THREAD_LOCAL.set(auth);
 	}
 	
 	static void clean() {
 		
-		THREAD_GLOBAL.remove();
+		THREAD_LOCAL.remove();
 	}
 
 }
