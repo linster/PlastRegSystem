@@ -8,7 +8,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.*;
 
-public class MyAccount_PersonalInformation_View extends Panel implements View {
+public class MyAccount_PersonalInformation_View extends PlastView implements View {
 
 @Override
 public void enter(ViewChangeEvent event) {

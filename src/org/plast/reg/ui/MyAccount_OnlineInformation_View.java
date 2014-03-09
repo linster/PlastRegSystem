@@ -1,6 +1,7 @@
 package org.plast.reg.ui;
 
 import org.plast.reg.AuthenticationHolder;
+import org.plast.reg.controller.BasicFormController;
 import org.plast.reg.util.NoAuthenticationException;
 
 import com.google.common.eventbus.EventBus;
@@ -8,7 +9,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.*;
 
-public class MyAccount_OnlineInformation_View extends Panel implements View {
+public class MyAccount_OnlineInformation_View extends PlastView implements View {
 
 @Override
 public void enter(ViewChangeEvent event) {
@@ -20,7 +21,8 @@ public void enter(ViewChangeEvent event) {
 	}
 }
 
-public MyAccount_OnlineInformation_View() {
+public MyAccount_OnlineInformation_View(BasicFormController b) {
+	this.RegisterController(b);
 	try {
 		buildLayout();
 	} catch (NoAuthenticationException e) {

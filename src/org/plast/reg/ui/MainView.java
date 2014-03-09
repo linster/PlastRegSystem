@@ -7,7 +7,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 
-public class MainView extends Panel implements View {
+public class MainView extends PlastView implements View {
 
 	@Override
 	public void enter(ViewChangeEvent event) {
